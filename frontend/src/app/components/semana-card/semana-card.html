@@ -1,0 +1,92 @@
+<div class="semana-card" [ngClass]="{ 'expended': record.expended }" (click)="onCardClick()">
+  <div class="card-top">
+    <div class="card-empleado">
+      <span class="badge-numero">{{ record.empleado?.numeroEmpleado }}</span>
+      <div class="card-nombre">{{ record.empleado?.nombre }}</div>
+      @if (record.empleado?.fechaBaja) {
+        <span class="badge-baja" title="De baja el {{ record.empleado?.fechaBaja }}">
+          BAJA
+        </span>
+      }
+      <span class="badge-turno" [ngClass]="'turno-' + (record.turnoExtra || 'A').charAt(0)">
+        {{ record.turnoExtra }}
+      </span>
+      @if (record.esAdministrativo) {
+        <span class="badge-mgmt" title="Siempre presente en tiempo extra">MGMT</span>
+      }
+    </div>
+    <div class="card-fecha">{{ record.fechaCorta }}</div>
+  </div>
+
+  @if (record.alertaRuta || record.alertaParada) {
+    <div class="card-alertas">
+      @if (record.alertaRuta) {
+        <span class="alerta-chip ruta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+            </path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          Ruta diferente
+        </span>
+      }
+      @if (record.alertaParada) {
+        <span class="alerta-chip parada">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+            </path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          Parada diferente
+        </span>
+      }
+    </div>
+  }
+
+  <div class="card-expandible" [ngClass]="{ 'show': record.expended }">
+    <div class="expand-content">
+      <div class="campo-mini">
+        <span class="campo-mini-label">Ruta usual</span>
+        <span class="campo-mini-valor">{{ record.empleado?.rutaUsual || '—' }}</span>
+      </div>
+      <div class="campo-mini">
+        <span class="campo-mini-label">Ruta extra</span>
+        <span class="campo-mini-valor" [ngClass]="{ 'text-warning': record.alertaRuta }">
+          {{ record.rutaExtra || '—' }}
+        </span>
+      </div>
+      <div class="campo-mini">
+        <span class="campo-mini-label">Parada usual</span>
+        <span class="campo-mini-valor">{{ record.empleado?.paradaUsual || '—' }}</span>
+      </div>
+      <div class="campo-mini">
+        <span class="campo-mini-label">Parada extra</span>
+        <span class="campo-mini-valor" [ngClass]="{ 'text-warning': record.alertaParada }">
+          {{ record.paradaExtra || '—' }}
+        </span>
+      </div>
+      @if (record.observaciones) {
+        <div class="campo-mini">
+          <span class="campo-mini-label">Observaciones</span>
+          <span class="campo-mini-valor">{{ record.observaciones }}</span>
+        </div>
+      }
+    </div>
+    <div class="card-acciones">
+      @if (!record.esAdministrativo) {
+        <button class="btn btn-sm btn-outline-info" (click)="verDetalle.emit(); $event.stopPropagation()">
+          Ver detalle
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="eliminar.emit(); $event.stopPropagation()">
+          Eliminar
+        </button>
+      } @else {
+        <span class="mgmt-hint">Siempre en tiempo extra</span>
+      }
+    </div>
+  </div>
+</div>

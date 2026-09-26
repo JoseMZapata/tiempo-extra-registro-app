@@ -1,0 +1,756 @@
+<div class="empleados-wrapper py-4">
+  <div class="container">
+    <!-- TITULO -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <h4 class="page-title mb-0">Gestión de Empleados</h4>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-success" (click)="abrirImportacion('pegar')" title="Importar varios empleados pegando columnas de Excel o subiendo un archivo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="me-1">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Importar empleados
+        </button>
+        <button class="btn btn-outline-secondary btn-recargar" (click)="cargarEmpleados()" [disabled]="cargando">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="me-1"
+            [ngClass]="{ 'rotando': cargando }"
+          >
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+          Recargar
+        </button>
+      </div>
+    </div>
+
+    @if (mensaje) {
+      <div class="alert alert-{{ tipoMensaje }} alert-dismissible fade show" role="alert">
+        {{ mensaje }}
+        <button type="button" class="btn-close" (click)="mensaje = ''"></button>
+      </div>
+    }
+
+    <!-- ESTADISTICAS -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-4 col-12">
+        <div class="stat-card stat-total">
+          <div class="stat-icono">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-numero">{{ totalEmpleados }}</div>
+            <div class="stat-label">Total empleados</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <div class="stat-card stat-activos">
+          <div class="stat-icono">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-numero">{{ totalActivos }}</div>
+            <div class="stat-label">Activos</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <div class="stat-card stat-bajas">
+          <div class="stat-icono">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-numero">{{ totalBajas }}</div>
+            <div class="stat-label">De baja</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="card tabla-panel">
+      <div class="filtros-row">
+        <div class="buscador-wrapper">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="buscador-icono"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            type="text"
+            class="form-control buscador-input"
+            [(ngModel)]="busqueda"
+            (ngModelChange)="aplicarFiltros()"
+            placeholder="Buscar por nombre, número, puesto, departamento, ruta..."
+          />
+          @if (busqueda) {
+            <button class="btn-clear-busqueda" (click)="busqueda = ''; aplicarFiltros()" title="Limpiar búsqueda">
+              ✕
+            </button>
+          }
+        </div>
+
+        <!-- Botón toggle filtros en mobile -->
+        <button class="btn btn-outline-secondary btn-filtros-toggle d-lg-none" (click)="mostrarFiltros = !mostrarFiltros" [attr.aria-expanded]="mostrarFiltros">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+          Filtros
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [class.rotado]="mostrarFiltros">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+
+        <!-- Panel de filtros (colapsable en mobile) -->
+        <div class="filtros-panel" [class.mostrar]="mostrarFiltros">
+          <div class="filtro-select">
+            <label class="filtro-label">Turno</label>
+            <select class="form-select form-select-sm" [(ngModel)]="filtroTurno" (ngModelChange)="aplicarFiltros()">
+              <option value="">Todos</option>
+              @for (turno of turnos; track turno) {
+                <option [value]="turno">Turno {{ turno }}</option>
+              }
+            </select>
+          </div>
+          <div class="filtro-select">
+            <label class="filtro-label">Depto</label>
+            <select class="form-select form-select-sm" [(ngModel)]="filtroDepartamento" (ngModelChange)="aplicarFiltros()">
+              <option value="">Todos</option>
+              @for (depto of departamentos; track depto) {
+                <option [value]="depto">{{ depto }}</option>
+              }
+            </select>
+          </div>
+          <div class="filtro-select">
+            <label class="filtro-label">Estado</label>
+            <select class="form-select form-select-sm" [(ngModel)]="filtroEstado" (ngModelChange)="aplicarFiltros()">
+              <option value="">Todos</option>
+              <option value="activos">Activos</option>
+              <option value="baja">De baja</option>
+              <option value="bloqueado">No tiempo extra</option>
+            </select>
+          </div>
+          <div class="filtro-select">
+            <label class="filtro-label">Ordenar por</label>
+            <select class="form-select form-select-sm" [(ngModel)]="ordenPor" (ngModelChange)="aplicarFiltros()">
+              <option value="">Sin orden</option>
+              @for (opcion of ordenOpciones; track opcion.value) {
+                <option [value]="opcion.value">{{ opcion.label }}</option>
+              }
+            </select>
+          </div>
+          <button class="btn btn-outline-secondary btn-limpiar" (click)="limpiarFiltros()" [disabled]="!busqueda && !filtroTurno && !filtroDepartamento && !filtroEstado && !ordenPor">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="me-1"
+            >
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+            Limpiar
+          </button>
+        </div>
+      </div>
+
+      <div class="resultados-info">
+        <span>
+          Mostrando
+          <strong>{{ empleadosFiltrados.length }}</strong>
+          de <strong>{{ totalEmpleados }}</strong> empleados
+        </span>
+      </div>
+
+      <!-- TABLA -->
+      <div class="table-responsive">
+        @if (cargando) {
+          <div class="estado-cargando">
+            <div class="spinner-border text-success" role="status"></div>
+            <p>Cargando empleados...</p>
+          </div>
+        } @else {
+          <table class="table table-hover align-middle tabla-empleados">
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>No.</th>
+                <th class="text-center">Turno</th>
+                <th>Puesto</th>
+                <th>Departamento</th>
+                <th>Centro de Costo</th>
+                <th>Ruta Usual</th>
+                <th>Parada Usual</th>
+                <th>Estatus</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (emp of empleadosFiltrados; track emp.id) {
+                <tr class="fila-editable" [ngClass]="{ 'fila-baja': emp.fechaBaja }"
+                  (click)="abrirEdicion(emp)" title="Clic para editar">
+                  <td>
+                    <div class="celda-empleado">
+                      <span class="avatar" [ngClass]="{ 'avatar-baja': emp.fechaBaja }">
+                        {{ iniciales(emp.nombre) }}
+                      </span>
+                      <span class="nombre-empleado">
+                        {{ emp.nombre || '—' }}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge-numero-tabla">{{ emp.numeroEmpleado }}</span>
+                  </td>
+                  <td class="text-center">
+                    @if (emp.turno) {
+                      <span class="badge-turno-tabla" [ngClass]="turnoClass(emp.turno)">{{ emp.turno }}</span>
+                    } @else {
+                      <span class="text-muted">—</span>
+                    }
+                  </td>
+                  <td>{{ emp.puesto || '—' }}</td>
+                  <td>{{ emp.departamento || '—' }}</td>
+                  <td>{{ emp.centroDeCosto || '—' }}</td>
+                  <td class="td-ruta">{{ emp.rutaUsual || '—' }}</td>
+                  <td class="td-ruta">{{ emp.paradaUsual || '—' }}</td>
+                  <td>
+                    @if (emp.bloqueadoTiempoExtra) {
+                      <span class="badge-estado bloqueado" title="No puede realizar tiempo extra">No tiempo extra</span>
+                    }
+                    @if (emp.fechaBaja) {
+                      <span class="badge-estado baja" title="De baja desde {{ emp.fechaBaja }}">De baja</span>
+                    } @else {
+                      <span class="badge-estado activo">Activo</span>
+                    }
+                  </td>
+                  <td class="text-center" (click)="$event.stopPropagation()">
+                    @if (auth.isAdmin()) {
+                      <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-danger" title="Eliminar empleado" (click)="eliminarEmpleado(emp)">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                            </path>
+                          </svg>
+                        </button>
+                      </div>
+                    } @else {
+                      <span class="text-muted">—</span>
+                    }
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="10" class="text-center text-muted py-5">
+                    <div class="estado-vacio">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      </svg>
+                      <p class="mt-2 mb-0 fw-semibold">
+                        {{ totalEmpleados === 0 ? 'No hay empleados registrados.' : 'Sin resultados para los filtros aplicados.' }}
+                      </p>
+                      @if (totalEmpleados > 0) {
+                        <button class="btn btn-sm btn-outline-secondary mt-2" (click)="limpiarFiltros()">
+                          Limpiar filtros
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR -->
+@if (mostrarModal && empleadoEdicion) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-custom modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <h5>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="me-2"
+          >
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          Editar empleado
+        </h5>
+        <button class="btn-close-custom" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-body-custom">
+        <div class="row g-3">
+          <div class="col-md-8 col-12">
+            <label class="campo-modal-label">Nombre completo</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="empleadoEdicion.nombre" />
+          </div>
+          <div class="col-md-4 col-12">
+            <label class="campo-modal-label">Número de empleado</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="empleadoEdicion.numeroEmpleado" />
+          </div>
+          <div class="col-md-6 col-12">
+            <label class="campo-modal-label">Departamento</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="empleadoEdicion.departamento" />
+          </div>
+          <div class="col-md-3 col-6">
+            <label class="campo-modal-label">Turno</label>
+            <select class="form-select form-select-sm" [(ngModel)]="empleadoEdicion.turno">
+              <option value="">—</option>
+              @for (turno of turnos; track turno) {
+                <option [value]="turno">{{ turno }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-3 col-6">
+            <label class="campo-modal-label">Sucursal</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="empleadoEdicion.sucursal" />
+          </div>
+          <div class="col-md-6 col-12">
+            <label class="campo-modal-label">Puesto</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="empleadoEdicion.puesto" />
+          </div>
+          <div class="col-md-6 col-12">
+            <label class="campo-modal-label">Centro de costo</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="empleadoEdicion.centroDeCosto" />
+          </div>
+          <div class="col-12">
+            <app-selector-ruta-parada
+              [rutas]="rutas"
+              [ruta]="empleadoEdicion.rutaUsual || ''"
+              [parada]="empleadoEdicion.paradaUsual || ''"
+              (rutaChange)="empleadoEdicion.rutaUsual = $event"
+              (paradaChange)="empleadoEdicion.paradaUsual = $event"
+              tamanio="sm"
+              etiquetaRuta="Ruta usual"
+              etiquetaParada="Parada del camión (usual)"
+            />
+          </div>
+          <div class="col-md-6 col-12">
+            <label class="campo-modal-label">Fecha de baja</label>
+            <div class="input-group input-group-sm">
+              <input type="date" class="form-control" [(ngModel)]="empleadoEdicion.fechaBaja" />
+              <button class="btn btn-outline-danger" type="button" (click)="limpiarFechaBaja()" title="Quitar fecha de baja">
+                Quitar
+              </button>
+            </div>
+            <div class="form-text text-muted small">Deja vacío para marcar como activo.</div>
+          </div>
+          <div class="col-md-6 col-12">
+            <label class="campo-modal-label">Restricciones</label>
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="bloqueoTiempoExtra"
+                [(ngModel)]="empleadoEdicion.bloqueadoTiempoExtra"
+              />
+              <label class="form-check-label" for="bloqueoTiempoExtra">
+                No puede realizar tiempo extra
+              </label>
+            </div>
+            <div class="form-text text-muted small">
+              Si está marcado, no se podrán registrar tiempos extra para este empleado.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        <button class="btn btn-outline-secondary btn-sm" (click)="cerrarModal()" [disabled]="guardando">Cancelar</button>
+        <button class="btn btn-primary btn-sm" (click)="guardarEdicion()" [disabled]="guardando">
+          @if (guardando) {
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+            Guardando...
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" class="me-1">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Guardar cambios
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL IMPORTAR EMPLEADOS -->
+@if (importarAbierto) {
+  <div class="modal-overlay" (click)="cerrarImportacion()">
+    <div class="modal-custom modal-xl importar-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <h5>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="me-2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          Importar empleados
+        </h5>
+        <button class="btn-close-custom" (click)="cerrarImportacion()">✕</button>
+      </div>
+
+      <div class="modal-body-custom">
+        <div class="importar-tabs">
+          <button type="button" class="importar-tab" [ngClass]="{ 'activo': importarModo === 'pegar' }" (click)="setModoImportacion('pegar')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M4 7V4h16v3"></path>
+              <path d="M9 20h6"></path>
+              <path d="M12 4v16"></path>
+            </svg>
+            Pegar por columnas
+          </button>
+          <button type="button" class="importar-tab" [ngClass]="{ 'activo': importarModo === 'excel' }" (click)="setModoImportacion('excel')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            Subir Excel
+          </button>
+        </div>
+
+        @if (importarModo === 'pegar') {
+          <div class="importar-instrucciones">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 16 12 12 12 8"></polyline>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <div>
+              En Excel selecciona la <strong>columna completa</strong> de cada dato, cópiala y pégala en el
+              campo correspondiente (una fila por línea). Si pegas un <strong>solo valor</strong> en un campo,
+              se aplica a todos los empleados.
+            </div>
+          </div>
+
+          <div class="campos-pegado">
+            @for (campo of camposImportacion; track campo.key) {
+              <div class="campo-pegado">
+                <label class="campo-modal-label">
+                  {{ campo.label }}
+                  @if (campo.requerido) {
+                    <span class="requerido">*</span>
+                  }
+                </label>
+                <textarea
+                  class="form-control form-control-sm"
+                  rows="3"
+                  [(ngModel)]="camposPegado[campo.key]"
+                  [placeholder]="campo.placeholder"
+                ></textarea>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="importar-instrucciones">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect>
+              <line x1="2" y1="9" x2="22" y2="9"></line>
+              <path d="M12 18v-6"></path>
+              <polyline points="9 15 12 18 15 15"></polyline>
+            </svg>
+            <div>
+              Sube un archivo de Excel (<strong>.xlsx</strong> o <strong>.xls</strong>). Se lee la
+              <strong>primera hoja</strong> y se detectan las columnas por su encabezado
+              (reconoce: Nombre, No. Empleado, Departamento, Turno, Puesto, C. Costo, Sucursal, Ruta y Parada).
+            </div>
+          </div>
+
+          <div class="excel-carga">
+            <div
+              class="excel-drop"
+              [ngClass]="{ 'arrastrando': arrastrandoSobre }"
+              (dragover.prevent)="arrastrandoSobre = true"
+              (dragenter.prevent)="arrastrandoSobre = true"
+              (dragleave)="arrastrandoSobre = false"
+              (drop.prevent)="onSoltarArchivo($event)"
+            >
+              <input
+                type="file"
+                id="input-excel-archivo"
+                accept=".xlsx,.xls"
+                hidden
+                (change)="onArchivoSeleccionado($event)"
+              />
+              <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <label for="input-excel-archivo" class="btn btn-sm btn-primary excel-btn-elegir">
+                Seleccionar archivo Excel
+              </label>
+              <span class="excel-drop-hint">o arrastra y suelta el archivo aquí</span>
+              @if (cargandoExcel) {
+                <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
+              }
+            </div>
+
+            @if (errorExcel) {
+              <div class="excel-error">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                {{ errorExcel }}
+              </div>
+            }
+
+            @if (archivoExcelNombre) {
+              <div class="excel-info">
+                <span class="excel-nombre" [title]="archivoExcelNombre">{{ archivoExcelNombre }}</span>
+                <span class="badge-excel-ok">✓ Leído</span>
+                <button class="btn btn-outline-danger btn-sm" (click)="limpiarExcel()">Quitar archivo</button>
+              </div>
+              <div class="excel-aviso">
+                @if (encabezadoDetectado) {
+                  Columnas detectadas: <strong>{{ columnasDetectadas.join(', ') }}</strong>. Haz clic en cualquier
+                  celda para corregirla o completarla.
+                } @else {
+                  No se detectó fila de encabezado, se usó el orden:
+                  <strong>Nombre | No. | Depto | Turno | Puesto | C. Costo | Sucursal | Ruta | Parada</strong>.
+                  Haz clic en las celdas para corregirlas.
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <div class="importar-preview">
+          <div class="preview-titulo d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span>
+              Vista previa
+              <span class="badge-preview-ok">{{ filasValidas }} válidas</span>
+              <span class="badge-preview-err">{{ filasImportacion.length - filasValidas }} con error</span>
+            </span>
+            <span class="text-muted small">Revisa antes de importar: las filas con error se omitirán.</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle tabla-preview mb-0">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nombre</th>
+                  <th>No.</th>
+                  <th>Depto</th>
+                  <th>Turno</th>
+                  <th>Puesto</th>
+                  <th>C. Costo</th>
+                  <th>Sucursal</th>
+                  <th>Ruta</th>
+                  <th>Parada</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (fila of filasImportacion; track fila.index) {
+                  <tr [ngClass]="{ 'fila-error': fila.errores.length > 0 }">
+                    <td class="text-muted">{{ fila.index }}</td>
+                    <td>
+                      @if (importarModo === 'excel') {
+                        <input type="text" class="celda-input" [value]="celdaExcel(fila.index - 1, 'nombre')"
+                          (input)="editarCelda(fila.index - 1, 'nombre', $event)" placeholder="Escribir…" title="Haz clic para editar" />
+                      } @else {
+                        <span class="td-truncate" [title]="fila.nombre">{{ fila.nombre }}</span>
+                      }
+                    </td>
+                    <td>
+                      @if (importarModo === 'excel') {
+                        <input type="text" class="celda-input" [value]="celdaExcel(fila.index - 1, 'numeroEmpleado')"
+                          (input)="editarCelda(fila.index - 1, 'numeroEmpleado', $event)" placeholder="No." title="Haz clic para editar" />
+                      } @else {
+                        <span class="td-truncate" [title]="fila.numeroEmpleado">{{ fila.numeroEmpleado }}</span>
+                      }
+                    </td>
+                    <td>
+                      @if (importarModo === 'excel') {
+                        <input type="text" class="celda-input" [value]="celdaExcel(fila.index - 1, 'departamento')"
+                          (input)="editarCelda(fila.index - 1, 'departamento', $event)" placeholder="Depto" title="Haz clic para editar" />
+                      } @else {
+                        <span class="td-truncate" [title]="fila.departamento">{{ fila.departamento }}</span>
+                      }
+                    </td>
+                    <td class="text-center">
+                      @if (importarModo === 'excel') {
+                        <input type="text" class="celda-input celda-input-turno" [value]="celdaExcel(fila.index - 1, 'turno')"
+                          (input)="editarCelda(fila.index - 1, 'turno', $event)" placeholder="A/B/C" title="Haz clic para editar" />
+                      } @else if (fila.turno) {
+                        <span class="badge-turno-tabla" [ngClass]="turnoClass(fila.turno)">{{ fila.turno }}</span>
+                      }
+                    </td>
+                    <td>
+                      @if (importarModo === 'excel') {
+                        <input type="text" class="celda-input" [value]="celdaExcel(fila.index - 1, 'puesto')"
+                          (input)="editarCelda(fila.index - 1, 'puesto', $event)" placeholder="—" title="Haz clic para editar" />
+                      } @else {
+                        <span class="td-truncate" [title]="fila.puesto ?? ''">{{ fila.puesto || '—' }}</span>
+                      }
+                    </td>
+                    <td>
+                      @if (importarModo === 'excel') {
+                        <input type="text" class="celda-input" [value]="celdaExcel(fila.index - 1, 'centroDeCosto')"
+                          (input)="editarCelda(fila.index - 1, 'centroDeCosto', $event)" placeholder="—" title="Haz clic para editar" />
+                      } @else {
+                        <span class="td-truncate" [title]="fila.centroDeCosto ?? ''">{{ fila.centroDeCosto || '—' }}</span>
+                      }
+                    </td>
+                    <td>
+                      @if (importarModo === 'excel') {
+                        <input type="text" class="celda-input" [value]="celdaExcel(fila.index - 1, 'sucursal')"
+                          (input)="editarCelda(fila.index - 1, 'sucursal', $event)" placeholder="—" title="Haz clic para editar" />
+                      } @else {
+                        <span class="td-truncate" [title]="fila.sucursal ?? ''">{{ fila.sucursal || '—' }}</span>
+                      }
+                    </td>
+                    <td>
+                      @if (importarModo === 'excel') {
+                        <input type="text" class="celda-input" [value]="celdaExcel(fila.index - 1, 'rutaUsual')"
+                          (input)="editarCelda(fila.index - 1, 'rutaUsual', $event)" placeholder="—" title="Haz clic para editar" />
+                      } @else {
+                        <span class="td-truncate" [title]="fila.rutaUsual ?? ''">{{ fila.rutaUsual || '—' }}</span>
+                      }
+                    </td>
+                    <td>
+                      @if (importarModo === 'excel') {
+                        <input type="text" class="celda-input" [value]="celdaExcel(fila.index - 1, 'paradaUsual')"
+                          (input)="editarCelda(fila.index - 1, 'paradaUsual', $event)" placeholder="—" title="Haz clic para editar" />
+                      } @else {
+                        <span class="td-truncate" [title]="fila.paradaUsual ?? ''">{{ fila.paradaUsual || '—' }}</span>
+                      }
+                    </td>
+                    <td class="preview-estado">
+                      @if (fila.errores.length === 0) {
+                        <span class="estado-ok">✓</span>
+                      } @else {
+                        <span class="estado-err">{{ fila.errores.join(', ') }}</span>
+                      }
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="11" class="text-center text-muted py-3">
+                      @if (importarModo === 'pegar') {
+                        Pega los datos en los campos de arriba para ver la vista previa.
+                      } @else {
+                        Sube un archivo Excel para ver la vista previa.
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer-custom d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span class="text-muted small">
+          Se importarán <strong>{{ filasValidas }}</strong> de {{ filasImportacion.length }} filas.
+        </span>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary btn-sm" (click)="limpiarImportacion()" [disabled]="importando">Limpiar</button>
+          <button class="btn btn-outline-secondary btn-sm" (click)="cerrarImportacion()" [disabled]="importando">Cancelar</button>
+          <button class="btn btn-success btn-sm" (click)="importar()" [disabled]="importando || filasValidas === 0">
+            @if (importando) {
+              <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+              Importando...
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" class="me-1">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              Importar {{ filasValidas }}
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,256 @@
+.registro-card {
+  background: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1.25rem;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.bloqueado-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-left: 4px solid #dc2626;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  animation: fadeInBanner 0.25s ease;
+
+  svg {
+    flex-shrink: 0;
+    color: #dc2626;
+  }
+
+  .bloqueado-titulo {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    line-height: 1.2;
+  }
+
+  .bloqueado-detalle {
+    font-size: 0.8rem;
+    margin-top: 0.15rem;
+  }
+}
+
+@keyframes fadeInBanner {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .bloqueado-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.doc-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.9rem;
+  border-bottom: 1px solid #e9ecef;
+
+  .doc-logo {
+    height: 30px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .doc-titles {
+    .doc-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #2e7d32;
+      letter-spacing: 0.5px;
+    }
+
+    .doc-subtitle {
+      font-size: 0.75rem;
+      color: #666;
+    }
+  }
+
+  .doc-meta {
+    margin-left: auto;
+
+    .fecha {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #2e7d32;
+      background: #e8f5e9;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+    }
+  }
+}
+
+.doc-section {
+  margin-bottom: 0.9rem;
+
+  .section-title {
+    color: #2e7d32;
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid #e8ecef;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0.6rem;
+  }
+}
+
+.campo-label {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #999;
+  margin-bottom: 0.1rem;
+  font-weight: 600;
+}
+
+.campo-valor {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #333;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px dashed #e0e0e0;
+  min-height: 1.2rem;
+}
+
+.turno-badge {
+  display: inline-block;
+  min-width: 2rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  color: #333;
+}
+
+.turno-a {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.turno-b {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.turno-c {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.progreso-section {
+  margin-top: 0.5rem;
+  background: #fafbfc;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0;
+
+  .section-title {
+    border-bottom: 1px solid #e8ecef;
+  }
+}
+
+.progreso-flex {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.progreso-ring {
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+
+  .ring-bg {
+    fill: none;
+    stroke: #e0e0e0;
+    stroke-width: 6;
+  }
+
+  .ring-fill {
+    fill: none;
+    stroke: #4caf50;
+    stroke-width: 6;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 40px 40px;
+    stroke-dasharray: 213.6;
+    stroke-dashoffset: 213.6;
+    transition: stroke-dashoffset 0.4s ease;
+  }
+
+  .ring-text {
+    fill: #2e7d32;
+    font-size: 15px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+}
+
+.progreso-info {
+  .progreso-titulo {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #333;
+  }
+
+  .progreso-detalle {
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 0.1rem;
+  }
+
+  .turnos-leyenda {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+
+    .leyenda-texto {
+      font-size: 0.65rem;
+      color: #999;
+      margin-left: 0.2rem;
+    }
+  }
+}
+
+.turno-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+@media (max-width: 480px) {
+  .progreso-flex {
+    flex-direction: column;
+    text-align: center;
+  }
+}

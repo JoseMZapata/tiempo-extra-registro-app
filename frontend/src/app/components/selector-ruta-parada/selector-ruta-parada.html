@@ -1,0 +1,55 @@
+<div class="selector-grid">
+  <div class="selector-col">
+    <label class="form-label">{{ etiquetaRuta }}</label>
+    @if (rutas.length === 0) {
+      <input
+        type="text"
+        [class]="claseInput"
+        [ngModel]="ruta"
+        (ngModelChange)="textoRuta($event)"
+        [disabled]="deshabilitarRuta"
+        placeholder="Escribe el nombre de la ruta"
+      />
+    } @else {
+      <select
+        [class]="claseSelect"
+        [ngModel]="ruta"
+        (ngModelChange)="cambiarRuta($event)"
+        [disabled]="deshabilitarRuta"
+      >
+        <option value="">— Seleccionar —</option>
+        @for (r of rutas; track r.id) {
+          <option [value]="r.nombre">{{ r.nombre }}</option>
+        }
+      </select>
+    }
+  </div>
+  <div class="selector-col">
+    <label class="form-label">{{ etiquetaParada }}</label>
+    @if (rutas.length === 0) {
+      <input
+        type="text"
+        [class]="claseInput"
+        [ngModel]="parada"
+        (ngModelChange)="textoParada($event)"
+        [disabled]="deshabilitarParada"
+        placeholder="Escribe la parada"
+      />
+    } @else {
+      <select
+        [class]="claseSelect"
+        [ngModel]="parada"
+        (ngModelChange)="cambiarParada($event)"
+        [disabled]="deshabilitarParada || paradasDisponibles.length === 0"
+      >
+        <option value="">— Seleccionar —</option>
+        @for (p of paradasDisponibles; track $index) {
+          <option [value]="p">{{ p }}</option>
+        }
+      </select>
+      @if (paradasDisponibles.length === 0 && ruta) {
+        <div class="form-text text-muted small">Esta ruta no tiene paradas registradas.</div>
+      }
+    }
+  </div>
+</div>

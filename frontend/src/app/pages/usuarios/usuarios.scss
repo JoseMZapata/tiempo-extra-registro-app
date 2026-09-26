@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+.tabla-panel {
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  background: white;
+}
+
+.tabla-usuarios {
+  thead th {
+    background: #f1f8e9;
+    color: #2e7d32;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 2px solid #c8e6c9;
+    white-space: nowrap;
+  }
+
+  tbody tr:hover {
+    background: #f9fbe7;
+  }
+}

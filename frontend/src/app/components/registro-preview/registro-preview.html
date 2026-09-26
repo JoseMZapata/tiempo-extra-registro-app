@@ -1,0 +1,121 @@
+<div class="letter-scaler">
+  <div class="registro-card">
+    @if (bloqueadoExtra) {
+      <div class="bloqueado-banner" role="alert">
+        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+        </svg>
+        <div>
+          <div class="bloqueado-titulo">No puede realizar tiempo extra</div>
+          <div class="bloqueado-detalle">
+            El empleado {{ datos?.numeroEmpleado || '' }} está marcado como «No tiempo extra» en la gestión de empleados.
+            No es posible generar el registro de tiempo extra.
+          </div>
+        </div>
+      </div>
+    }
+    <div class="doc-header">
+      <img src="assets/eco.png" alt="Ecocable" class="doc-logo" />
+      <div class="doc-titles">
+        <div class="doc-title">ECOCABLE MEXICO</div>
+        <div class="doc-subtitle">Registro de Tiempo Extra</div>
+      </div>
+      <div class="doc-meta">
+        <span class="fecha">{{ (datos?.fecha || '') | date: 'dd/MM/yyyy' }}</span>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <h6 class="section-title">Empleado</h6>
+      <div class="row g-2">
+        <div class="col-7">
+          <span class="campo-label">Nombre</span>
+          <div class="campo-valor">{{ datos?.nombre || '—' }}</div>
+        </div>
+        <div class="col-5">
+          <span class="campo-label">Número de empleado</span>
+          <div class="campo-valor">{{ datos?.numeroEmpleado || '—' }}</div>
+        </div>
+        <div class="col-6">
+          <span class="campo-label">Departamento</span>
+          <div class="campo-valor">{{ datos?.departamento || '—' }}</div>
+        </div>
+        <div class="col-6">
+          <span class="campo-label">Turno</span>
+          <span class="turno-badge" [ngClass]="turnoClass(datos?.turno)">{{ datos?.turno || '—' }}</span>
+        </div>
+        <div class="col-12">
+          <span class="campo-label">Ruta usual</span>
+          <div class="campo-valor">{{ datos?.rutaUsual || '—' }}</div>
+        </div>
+        <div class="col-12">
+          <span class="campo-label">Parada del camión (usual)</span>
+          <div class="campo-valor">{{ datos?.paradaUsual || '—' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <h6 class="section-title">Tiempo Extra</h6>
+      <div class="row g-2">
+        <div class="col-6">
+          <span class="campo-label">Horario</span>
+          <div class="campo-valor">{{ labelHorario(datos?.horario) }}</div>
+        </div>
+        <div class="col-6">
+          <span class="campo-label">Fecha</span>
+          <div class="campo-valor">{{ (datos?.fecha ? datos!.fecha : '—') }}</div>
+        </div>
+        <div class="col-6">
+          <span class="campo-label">Turno de tiempo extra</span>
+          <span class="turno-badge" [ngClass]="turnoClass(datos?.turnoExtra)">{{ datos?.turnoExtra || '—' }}</span>
+        </div>
+        <div class="col-12">
+          <span class="campo-label">Ruta de tiempo extra (actual)</span>
+          <div class="campo-valor">{{ datos?.rutaExtra || '—' }}</div>
+        </div>
+        <div class="col-12">
+          <span class="campo-label">Parada del camión (extra)</span>
+          <div class="campo-valor">{{ datos?.paradaExtra || '—' }}</div>
+        </div>
+        @if (datos?.observaciones) {
+          <div class="col-12">
+            <span class="campo-label">Observaciones</span>
+            <div class="campo-valor">{{ datos!.observaciones }}</div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="doc-section progreso-section">
+      <div class="progreso-flex">
+        <svg class="progreso-ring" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="34" class="ring-bg"></circle>
+          <circle
+            cx="40"
+            cy="40"
+            r="34"
+            class="ring-fill"
+            [attr.stroke-dashoffset]="dashoffset"
+          ></circle>
+          <text x="40" y="45" class="ring-text">{{ progreso }}%</text>
+        </svg>
+        <div class="progreso-info">
+          <div class="progreso-titulo">
+            {{ progreso === 100 ? '¡Formulario completo!' : 'Progreso del formulario' }}
+          </div>
+          <div class="progreso-detalle">{{ mensajeProgreso }}</div>
+          <div class="turnos-leyenda">
+            <span class="turno-chip turno-a">A</span>
+            <span class="turno-chip turno-b">B</span>
+            <span class="turno-chip turno-c">C</span>
+            <span class="leyenda-texto">Turnos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

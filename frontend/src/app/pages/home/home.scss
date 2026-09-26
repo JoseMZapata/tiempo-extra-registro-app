@@ -1,0 +1,281 @@
+.page-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.page-title {
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+.page-subtitle {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.badge-pendientes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #fff8e1;
+  color: #7f6000;
+  border: 1px solid #f0e0a4;
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ============ PANEL PENDIENTES ============ */
+.pendientes-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.pendientes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1.1rem;
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+
+  h5 {
+    color: #2e7d32;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  svg {
+    color: #2e7d32;
+  }
+}
+
+.pendientes-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+.pendientes-body {
+  padding: 1rem 1.1rem;
+  background: #f7f8fa;
+}
+
+.grupo-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: #2e7d32;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.grupo-pendiente {
+  margin-bottom: 0.9rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.grupo-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 1px solid #e3ece3;
+  border-left: 4px solid #2e7d32;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.6rem;
+  border-radius: 10px;
+  color: #2f3b30;
+
+  svg {
+    flex-shrink: 0;
+    color: #2e7d32;
+  }
+
+  strong {
+    font-size: 0.85rem;
+  }
+}
+
+.pendientes-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pendiente-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    border-color: #c8e6c9;
+    box-shadow: 0 2px 8px rgba(46, 125, 50, 0.08);
+  }
+
+  &.fila-edicion {
+    background: #fffbeb;
+    border-color: #fde68a;
+    box-shadow: inset 3px 0 0 #f59e0b;
+  }
+}
+
+.pendiente-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.pendiente-info {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.pendiente-nombre {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.88rem;
+
+  .pendiente-editando {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #e65100;
+  }
+}
+
+.pendiente-sub {
+  font-size: 0.75rem;
+  color: #777;
+  margin-top: 0.1rem;
+}
+
+.pendiente-obs {
+  font-size: 0.72rem;
+  color: #666;
+  margin-top: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 420px;
+}
+
+.pendiente-extra {
+  flex: 0 1 240px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+
+  .pendiente-extra-texto {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #444;
+    margin-top: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .pendiente-extra-sub {
+    font-size: 0.7rem;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+}
+
+.pendiente-acciones {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.pendientes-footer {
+  background: #fbfcfb;
+  border-top: 1px solid #e9ecef;
+  padding: 0.8rem 1.1rem;
+}
+
+/* ============ BADGES ============ */
+.turno-badge {
+  display: inline-block;
+  min-width: 1.9rem;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.turno-a {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.turno-b {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.turno-c {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .pendiente-item {
+    flex-wrap: wrap;
+  }
+
+  .pendiente-extra {
+    flex: 1 1 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pendiente-obs {
+    max-width: 100%;
+  }
+}

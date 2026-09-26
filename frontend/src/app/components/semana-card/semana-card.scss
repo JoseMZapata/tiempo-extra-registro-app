@@ -1,0 +1,200 @@
+.semana-card {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    background: #fafffe;
+  }
+
+  &.expended {
+    background: #f5faf5;
+    box-shadow: inset 3px 0 0 #4caf50;
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-empleado {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .badge-numero {
+    background: #2e7d32;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .badge-baja {
+    background: #dc2626;
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+    animation: pulseBaja 1.6s infinite;
+  }
+
+  .card-nombre {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .badge-turno {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .badge-mgmt {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    background: #1f4e79;
+    color: #ffffff;
+    flex-shrink: 0;
+  }
+
+  .turno-a {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .turno-b {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+
+  .turno-c {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  .card-fecha {
+    font-size: 0.7rem;
+    color: #888;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+  }
+}
+
+.card-alertas {
+  display: flex;
+  gap: 0.35rem;
+  padding-top: 0.4rem;
+}
+
+.alerta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+
+  &.ruta {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  &.parada {
+    background: #fce4ec;
+    color: #c62828;
+  }
+}
+
+.card-expandible {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s;
+  opacity: 0;
+
+  &.show {
+    max-height: 320px;
+    opacity: 1;
+    padding-top: 0.65rem;
+  }
+}
+
+.expand-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+.campo-mini {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+
+  .campo-mini-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #999;
+    min-width: 70px;
+    flex-shrink: 0;
+  }
+
+  .campo-mini-valor {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #444;
+  }
+}
+
+.text-warning {
+  color: #e65100 !important;
+  font-weight: 600 !important;
+}
+
+.card-acciones {
+  display: flex;
+  gap: 0.35rem;
+  padding-top: 0.5rem;
+}
+
+.mgmt-hint {
+  font-size: 0.72rem;
+  color: #1f4e79;
+  background: #eef2f8;
+  border: 1px dashed #b7c6da;
+  border-radius: 6px;
+  padding: 0.25rem 0.6rem;
+}
+
+@keyframes pulseBaja {
+  0%,
+  100% {
+    background: #dc2626;
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+  }
+  50% {
+    background: #f87171;
+    box-shadow: 0 0 0 5px rgba(220, 38, 38, 0);
+  }
+}

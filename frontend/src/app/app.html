@@ -1,0 +1,11 @@
+<div class="app-shell">
+  @if (auth.isAuthenticated()) {
+    <app-navbar />
+  }
+  <main class="app-main">
+    <router-outlet />
+  </main>
+  @if (auth.isAuthenticated()) {
+    <app-footer />
+  }
+</div>

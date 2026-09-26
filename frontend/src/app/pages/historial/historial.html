@@ -1,0 +1,1175 @@
+<div class="historial-wrapper">
+  <div class="container-fluid py-4">
+    <div class="row g-4">
+
+      <!-- Columna izquierda: Registros de la semana -->
+      <div class="col-lg-4 col-xl-3">
+        <div class="semana-panel">
+          <div class="panel-header">
+            <div class="panel-title-row">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <h6>Semana actual</h6>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge-semana">{{ semanaActualItems.length }} registros</span>
+            </div>
+          </div>
+
+          @if (semanaActualItems.length === 0) {
+            <div class="panel-vacio">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+                stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <p>Sin registros esta semana</p>
+            </div>
+          }
+
+          <div class="semana-lista">
+            @for (reg of semanaActualItems; track reg.id ?? reg.empleado?.id) {
+              <app-semana-card [record]="reg"
+                (toggle)="toggleExpand(reg)"
+                (verDetalle)="seleccionarRegistro(reg)"
+                (eliminar)="confirmarEliminar(reg)"></app-semana-card>
+            }
+          </div>
+        </div>
+
+        <div class="semana-panel mt-3">
+          <div class="panel-header">
+            <div class="panel-title-row">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <h6>Semana pasada</h6>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge-semana">{{ semanaPasadaItems.length }} registros</span>
+            </div>
+          </div>
+
+          @if (semanaPasadaItems.length === 0) {
+            <div class="panel-vacio">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+                stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <p>Sin registros la semana pasada</p>
+            </div>
+          }
+
+          <div class="semana-lista">
+            @for (reg of semanaPasadaItems; track reg.id ?? reg.empleado?.id) {
+              <app-semana-card [record]="reg"
+                (toggle)="toggleExpand(reg)"
+                (verDetalle)="seleccionarRegistro(reg)"
+                (eliminar)="confirmarEliminar(reg)"></app-semana-card>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna derecha: Tabla completa -->
+      <div class="col-lg-8 col-xl-9">
+        @if (mensaje) {
+          <div class="alert alert-{{ tipoMensaje }} alert-dismissible fade show alert-custom" role="alert">
+            {{ mensaje }}
+            <button type="button" class="btn-close" (click)="mensaje = ''"></button>
+          </div>
+        }
+
+        <div class="tabla-panel rutas-panel">
+          <div class="panel-header">
+            <div class="panel-title-row">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 22h14"></path>
+                <path d="M5 2h14h-1a6 6 0 0 0-6 6v14a7 7 0 0 0 8 0V7"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M14 5h6"></path>
+              </svg>
+              <h6>Rutas en tiempo extra <span class="badge-semana">Semana actual</span></h6>
+            </div>
+            <div class="panel-acciones">
+              <div class="badge-estadistica">
+                <span class="estadistica-numero">{{ resumenRutas.length }}</span>
+                <span class="estadistica-label">Rutas</span>
+              </div>
+              <button class="btn btn-sm btn-outline-primary btn-gestion-rutas" (click)="irARutas()"
+                title="Ir a la vista de rutas para administrar paradas">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" class="me-1">
+                  <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                </svg>
+                Gestionar rutas
+              </button>
+              <button class="btn btn-sm btn-success btn-export-todo" (click)="exportarTodoExcel()"
+                title="Descargar todas las tablas en un Excel con varias hojas">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" class="me-1">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Exportar Semana
+              </button>
+            </div>
+          </div>
+
+          <div class="rutas-dias-grid">
+            @for (dia of resumenDias; track dia.dia) {
+              <div class="ruta-dia-card {{ dia.colorClass }}" (click)="toggleDia(dia)"
+                [title]="'Ver las rutas de ' + dia.etiqueta">
+                <span class="ruta-dia-chip" [ngClass]="chipDiaClass(dia.dia)">{{ etiquetaDiaCorta(dia.dia) }}</span>
+                <span class="ruta-dia-label">{{ dia.etiqueta }}</span>
+                <span class="ruta-dia-numero">{{ dia.totalRutas }}</span>
+                <span class="ruta-dia-sub">rutas</span>
+                <span class="ruta-dia-pers">{{ dia.totalPersonas }} persona{{ dia.totalPersonas === 1 ? '' : 's' }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="table-responsive tabla-scroll tabla-scroll--rutas">
+            <table class="table align-middle tabla-rutas">
+              <thead>
+                <tr>
+                  <th>Ruta</th>
+                  <th class="text-center">Personas</th>
+                  <th class="text-center">7-4</th>
+                  <th class="text-center">7-7</th>
+                  <th class="text-center">Puntos</th>
+                  <th class="text-center">Dias</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (grupo of resumenRutas; track grupo.ruta) {
+                  <tr class="fila-ruta" (click)="toggleRuta(grupo)">
+                    <td class="td-ruta-nombre">{{ grupo.ruta }}</td>
+                    <td class="text-center fw-bold">{{ grupo.total }}</td>
+                    <td class="text-center">
+                      <span class="badge-horario c74">{{ grupo.horario74 }}</span>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge-horario c77">{{ grupo.horario77 }}</span>
+                    </td>
+                    <td class="text-center">
+                      <span class="btn-puntos">
+                        {{ grupo.puntos.length }} @if (grupo.expandido) {v} @else {>}
+                      </span>
+                    </td>
+                    <td class="text-center td-dias-rutas">
+                      <div class="dias-chips">
+                        @for (dia of grupo.dias || []; track dia) {
+                          <span class="chip-dia" [ngClass]="chipDiaClass(dia)"
+                            [title]="etiquetaDiaCompleta(dia)">{{ etiquetaDiaCorta(dia) }}</span>
+                        } @empty {
+                          <span class="text-muted">-</span>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                  @if (grupo.expandido) {
+                    <tr class="fila-puntos">
+                      <td colspan="6">
+                        <div class="puntos-label">Puntos seleccionados en esta ruta</div>
+                        @for (punto of grupo.puntos; track punto.parada) {
+                          <div class="punto-chip">
+                            <span class="punto-texto">{{ punto.parada }}</span>
+                            <span class="punto-total">{{ punto.total }}</span>
+                            <span class="punto-hora c74">{{ punto.horario74 }} (7-4)</span>
+                            <span class="punto-hora c77">{{ punto.horario77 }} (7-7)</span>
+                          </div>
+                        } @empty {
+                          <div class="puntos-label">Sin paradas registradas</div>
+                        }
+                      </td>
+                    </tr>
+                  }
+                } @empty {
+                  <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                      Sin registros de rutas en tiempo extra.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="rutas-dias-separador">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span class="rutas-dias-titulo">Rutas por dia</span>
+            <span class="badge-semana">Semana actual</span>
+          </div>
+
+          <div class="table-responsive tabla-scroll tabla-scroll--rutas-dias">
+            <table class="table align-middle tabla-rutas-dias">
+              <thead>
+                <tr>
+                  <th>Dia</th>
+                  <th class="text-center">Rutas</th>
+                  <th class="text-center">Personas</th>
+                  <th class="text-center">Detalle</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (dia of resumenDias; track dia.dia) {
+                  <tr class="fila-dia" [ngClass]="{ 'activo': dia.expandido }" (click)="toggleDia(dia)">
+                    <td>
+                      <span class="chip-dia" [ngClass]="chipDiaClass(dia.dia)">{{ etiquetaDiaCorta(dia.dia) }}</span>
+                      <span class="dia-etiqueta">{{ dia.etiqueta }}</span>
+                    </td>
+                    <td class="text-center fw-bold">{{ dia.totalRutas }}</td>
+                    <td class="text-center">{{ dia.totalPersonas }}</td>
+                    <td class="text-center">
+                      <span class="btn-puntos">
+                        @if (dia.expandido) {v} @else {>}
+                      </span>
+                    </td>
+                  </tr>
+                  @if (dia.expandido) {
+                    <tr class="fila-dia-detalle">
+                      <td colspan="4">
+                        @if (dia.dia === 'OTROS' && dia.detalle) {
+                          <div class="puntos-label">Rutas de lunes a jueves</div>
+                          <table class="table align-middle sub-tabla-dias">
+                            <thead>
+                              <tr>
+                                <th>Dia</th>
+                                <th>Ruta</th>
+                                <th class="text-center">Personas</th>
+                                <th class="text-center">Detalle</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              @for (det of dia.detalle; track det.dia + '|' + det.ruta) {
+                                <tr>
+                                  <td class="td-dia-detalle">
+                                    <span class="chip-dia d-otros">O</span>
+                                    <span class="dia-etiqueta">{{ det.etiquetaDia }}</span>
+                                  </td>
+                                  <td class="td-ruta-detalle">{{ det.ruta }}</td>
+                                  <td class="text-center">
+                                    <span class="punto-total">{{ det.total }}</span>
+                                  </td>
+                                  <td class="text-center td-turnos-detalle">
+                                    <div class="turnos-chips">
+                                      @for (turno of det.turnos; track turno) {
+                                        <span class="chip-turno" [ngClass]="turnoChipClass(turno)">Turno {{ turno }}</span>
+                                      } @empty {
+<span class="text-muted">-</span>
+                                      }
+                                    </div>
+                                  </td>
+                                </tr>
+                              } @empty {
+                                <tr>
+                                  <td colspan="4" class="text-center text-muted py-3">
+                                    Sin rutas registradas de lunes a jueves.
+                                  </td>
+                                </tr>
+                              }
+                            </tbody>
+                          </table>
+                        } @else {
+                          <div class="puntos-label">Rutas registradas este dia</div>
+                          @for (rutaDia of dia.rutas; track rutaDia.ruta) {
+                            <div class="punto-chip">
+                              <span class="punto-texto">{{ rutaDia.ruta }}</span>
+                              <span class="punto-total">{{ rutaDia.total }}</span>
+                              <span class="punto-hora c74">{{ rutaDia.horario74 }} (7-4)</span>
+                              <span class="punto-hora c77">{{ rutaDia.horario77 }} (7-7)</span>
+                            </div>
+                          } @empty {
+                            <div class="puntos-label">Sin rutas registradas en este dia.</div>
+                          }
+                        }
+                      </td>
+                    </tr>
+                  }
+                } @empty {
+                  <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                      Sin resumen por dia.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tabla-panel mt-3 admin-panel">
+          <div class="panel-header">
+            <div class="panel-title-row">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+              <h6>Administrativos / Management <span class="badge-semana">{{ adminActivos.length }} de {{ adminEmpleados.length }} empleados</span></h6>
+            </div>
+            <div class="panel-acciones">
+              <span class="admin-hint">Siempre presentes en tiempo extra Ã‚Â· usa el interruptor para desactivar esta semana</span>
+              @if (adminDeshabilitados.size > 0) {
+                <span class="admin-hint warning">{{ adminDeshabilitados.size }} desactivados</span>
+              }
+              <button class="btn btn-sm btn-primary" (click)="abrirAgregarAdmin()"
+                title="Agregar empleados al grupo administrativo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" class="me-1">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Agregar
+              </button>
+              <button class="btn btn-sm btn-outline-primary" (click)="registrarSemanaManagement()"
+                [disabled]="generandoSemana" title="Crear el registro del viernes (7-4, ruta usual) para cada Management">
+                @if (generandoSemana) {
+                  <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" class="me-1">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                }
+                Registro viernes
+              </button>
+            </div>
+          </div>
+
+          @if (adminEmpleados.length === 0) {
+            <div class="admin-vacio">
+              <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none"
+                stroke="#c3cdd9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <p>Sin empleados administrativos. Usa <strong>Agregar</strong> para seleccionarlos.</p>
+            </div>
+          } @else {
+            <div class="table-responsive tabla-scroll">
+              <table class="table table-hover align-middle tabla-historial">
+                <thead>
+                  <tr>
+                    <th>No. Empleado</th>
+                    <th>Nombre</th>
+                    <th>Puesto</th>
+                    <th>Departamento</th>
+                    <th>Centro de Costo</th>
+                    <th>Turno</th>
+                    <th class="text-center">Ruta usual (TE)</th>
+                    <th class="text-center">Esta semana</th>
+                    <th class="text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (emp of adminEmpleados; track emp.id) {
+                    <tr class="admin-fila-editable" [ngClass]="{ 'admin-fila-desactivada': estaAdminDeshabilitado(emp) }"
+                      (click)="abrirEditarAdmin(emp)"
+                      [title]="estaAdminDeshabilitado(emp) ? 'Desactivado esta semana - clic para editar' : 'Clic para editar'">
+                      <td><span class="badge-numero-tabla">{{ emp.numeroEmpleado }}</span></td>
+<td class="td-nombre">{{ emp.nombre || '-' }}
+                        @if (emp.fechaBaja) {
+                          <span class="mini-baja" title="De baja el {{ emp.fechaBaja }}">BAJA</span>
+                        }
+                        @if (emp.bloqueadoTiempoExtra) {
+                          <span class="mini-alerta ruta" title="No puede realizar tiempo extra">No T.E.</span>
+                        }
+                        @if (estaAdminDeshabilitado(emp)) {
+                          <span class="mini-alerta parada" title="No viene esta semana">No viene</span>
+                        }
+                      </td>
+<td>{{ emp.puesto || '-' }}</td>
+<td>{{ emp.departamento || '-' }}</td>
+                      <td>{{ emp.centroDeCosto || '-' }}</td>
+                      <td>
+                        <span class="badge-turno-tabla" [ngClass]="'turno-' + (emp.turno || 'A').charAt(0)">
+{{ emp.turno || '-' }}
+                        </span>
+                      </td>
+                      <td class="text-center admin-rutas-celda">
+                        @if (emp.rutaUsual) {
+                          <div class="rutas-mini-chips">
+                            <span class="chip-ruta-mini">{{ emp.rutaUsual }}</span>
+                          </div>
+                        } @else {
+                          <span class="admin-sin-ruta">-</span>
+                        }
+                      </td>
+                      <td class="text-center" (click)="$event.stopPropagation()">
+                        <div class="form-check form-switch admin-switch justify-content-center">
+                          <input class="form-check-input" type="checkbox" [id]="'admin-semana-' + emp.id"
+                            [checked]="!estaAdminDeshabilitado(emp)" (change)="toggleAdminSemana(emp)"
+                            [title]="estaAdminDeshabilitado(emp) ? 'Habilitar para esta semana' : 'Deshabilitar: esta semana no viene'" />
+                          <label class="form-check-label" for="admin-semana-{{ emp.id }}"></label>
+                        </div>
+                      </td>
+                      <td class="text-center" (click)="$event.stopPropagation()">
+                        <div class="btn-group btn-group-sm">
+                          <button class="btn btn-outline-danger" title="Quitar del grupo Administrativo"
+                            (click)="confirmarQuitarAdmin(emp)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="3 6 5 6 21 6"></polyline>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                              </path>
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+
+        <div class="tabla-panel mt-3">
+          <div class="panel-header">
+            <div class="panel-title-row">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+              <h6>Todos los registros</h6>
+            </div>
+            <div class="panel-acciones">
+              <div class="badge-estadistica">
+                <span class="estadistica-numero">{{ totalRegistros() }}</span>
+                <span class="estadistica-label">Registros</span>
+              </div>
+              @if (totalAlertas() > 0) {
+                <div class="badge-estadistica alerta">
+                  <span class="estadistica-numero">{{ totalAlertas() }}</span>
+                  <span class="estadistica-label">Alertas</span>
+                </div>
+              }
+              <button class="btn btn-sm btn-success" (click)="exportarExcel()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" class="me-1">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Exportar Historial
+              </button>
+            </div>
+          </div>
+
+          <div class="filtros-row">
+            <div class="buscador-wrapper">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="buscador-icono"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input
+                type="text"
+                class="form-control buscador-input"
+                [(ngModel)]="busqueda"
+                (ngModelChange)="aplicarFiltros()"
+                placeholder="Buscar por nombre, ruta, parada, empleado..."
+              />
+              @if (busqueda) {
+                <button class="btn-clear-busqueda" (click)="busqueda = ''; aplicarFiltros()" title="Limpiar busqueda">
+                  x
+                </button>
+              }
+            </div>
+            <div class="filtro-select">
+              <label class="filtro-label">Periodo</label>
+              <select class="form-select form-select-sm" [(ngModel)]="filtroPeriodo" (ngModelChange)="aplicarFiltros()">
+                <option value="semana">Semana actual</option>
+                <option value="semana-pasada">Semana pasada</option>
+                <option value="todo">Todas las fechas</option>
+              </select>
+            </div>
+            <div class="filtro-select">
+              <label class="filtro-label">Depto</label>
+              <select class="form-select form-select-sm" [(ngModel)]="filtroDepartamento" (ngModelChange)="aplicarFiltros()">
+                <option value="">Todos</option>
+                @for (depto of departamentos; track depto) {
+                  <option [value]="depto">{{ depto }}</option>
+                }
+              </select>
+            </div>
+            <button
+              class="btn btn-outline-secondary btn-limpiar"
+              (click)="limpiarFiltros()"
+              [disabled]="!busqueda && filtroPeriodo === 'semana' && !filtroDepartamento"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="me-1"
+              >
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+              </svg>
+              Limpiar
+            </button>
+          </div>
+
+          <div class="resultados-info">
+            <span>
+              Mostrando
+              <strong>{{ registrosExportar.length }}</strong>
+              de <strong>{{ registros.length }}</strong> registros
+            </span>
+          </div>
+
+          @if (cargando) {
+            <div class="text-center py-5">
+              <div class="spinner-grow text-success" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+            </div>
+          } @else {
+            <div class="table-responsive tabla-scroll">
+              <table class="table table-hover align-middle tabla-historial">
+                <thead>
+                  <tr>
+                    <th>No. Empleado</th>
+                    <th>Nombre</th>
+                    <th>Puesto</th>
+                    <th>Departamento</th>
+                    <th>Centro de Costo</th>
+                    <th>Turno Extra</th>
+                    <th>Horario</th>
+                    <th>Fecha</th>
+                    <th>Dia</th>
+                    <th>Ruta Extra</th>
+                    <th>Parada Extra</th>
+                    <th>Alertas</th>
+                    <th class="text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (reg of registrosExportar; track reg.id) {
+                    <tr class="fila-editable" [ngClass]="{ 'fila-alerta': reg.alertaRuta || reg.alertaParada }"
+                      (click)="seleccionarRegistro(reg)" title="Clic para ver detalle">
+                      <td><span class="badge-numero-tabla">{{ reg.empleado?.numeroEmpleado }}</span></td>
+                      <td class="td-nombre">{{ reg.empleado?.nombre || '-' }}
+                        @if (reg.empleado?.fechaBaja) {
+                          <span class="mini-baja" title="De baja el {{ reg.empleado?.fechaBaja }}">BAJA</span>
+                        }
+                      </td>
+                      <td>{{ reg.empleado?.puesto || '-' }}</td>
+                      <td>{{ reg.empleado?.departamento || '-' }}</td>
+                      <td>{{ reg.empleado?.centroDeCosto || '-' }}</td>
+                      <td>
+                        <span class="badge-turno-tabla" [ngClass]="'turno-' + (reg.turnoExtra || 'A').charAt(0)">
+                          {{ reg.turnoExtra }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="badge-horario" [ngClass]="reg.horario === '7-7' ? 'c77' : 'c74'">
+                          {{ reg.horario || '-' }}
+                        </span>
+                      </td>
+                      <td>{{ reg.fecha }}</td>
+                      <td>
+                        <span class="badge-dia">{{ reg.diaSemana }}</span>
+                      </td>
+                      <td class="td-ruta">{{ reg.rutaExtra || '-' }}</td>
+                      <td class="td-ruta">{{ reg.paradaExtra || '-' }}</td>
+                      <td class="td-alertas">
+                        @if (reg.alertaRuta) {
+                          <span class="mini-alerta ruta">Ruta</span>
+                        }
+                        @if (reg.alertaParada) {
+                          <span class="mini-alerta parada">Parada</span>
+                        }
+                        @if (!reg.alertaRuta && !reg.alertaParada) {
+                          <span class="mini-alerta ok">OK</span>
+                        }
+                      </td>
+                      <td class="text-center" (click)="$event.stopPropagation()">
+                        <div class="btn-group btn-group-sm">
+                          <button class="btn btn-outline-primary" title="Editar registro"
+                            (click)="abrirEditarRegistro(reg)" [disabled]="!reg.id">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                          </button>
+                          <button class="btn btn-outline-danger" title="Eliminar"
+                            (click)="confirmarEliminar(reg)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <polyline points="3 6 5 6 21 6"></polyline>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                              </path>
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="13" class="text-center text-muted py-4">
+                        No se encontraron registros.
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Eliminar -->
+@if (mostrarModal) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-custom" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom danger">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        <h5>Confirmar Eliminacion</h5>
+      </div>
+      <div class="modal-body-custom">
+        <p>Eliminar el registro de
+          <strong>{{ registroSeleccionado?.empleado?.nombre }}</strong> del
+          <strong>{{ registroSeleccionado?.fecha }}</strong>?
+        </p>
+        <p class="text-muted small mb-0">Esta accion no se puede deshacer.</p>
+      </div>
+      <div class="modal-footer-custom">
+        <button class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn btn-danger" (click)="eliminar()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal Detalle -->
+@if (mostrarModalDetalle && registroSeleccionado) {
+  <div class="modal-overlay" (click)="cerrarModalDetalle()">
+    <div class="modal-custom modal-xl" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <div>
+          <h5 class="mb-0">Detalle del Registro #{{ registroSeleccionado.id }}</h5>
+          <small class="text-muted">{{ registroSeleccionado.empleado?.nombre }} -
+            {{ registroSeleccionado.fecha }}</small>
+        </div>
+        <button class="btn-close-custom" (click)="cerrarModalDetalle()">&times;</button>
+      </div>
+      <div class="modal-body-custom">
+        @if (registroSeleccionado.alertaRuta || registroSeleccionado.alertaParada) {
+          <div class="alertas-banner">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+              </path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            @if (registroSeleccionado.alertaRuta) {
+              <span>Ruta diferente a la usual</span>
+            }
+            @if (registroSeleccionado.alertaRuta && registroSeleccionado.alertaParada) {
+              <span class="separator">|</span>
+            }
+            @if (registroSeleccionado.alertaParada) {
+              <span>Parada diferente a la usual</span>
+            }
+          </div>
+        }
+
+        <div class="row g-3">
+          <div class="col-12">
+            <h6 class="section-modal-title">Datos del Empleado</h6>
+          </div>
+          <div class="col-md-3 col-6">
+            <span class="campo-modal-label">Nombre</span>
+            <div class="campo-modal-valor">{{ registroSeleccionado.empleado?.nombre }}</div>
+          </div>
+          <div class="col-md-3 col-6">
+            <span class="campo-modal-label">No. Empleado</span>
+            <div class="campo-modal-valor">
+              {{ registroSeleccionado.empleado?.numeroEmpleado }}
+              @if (registroSeleccionado.empleado?.fechaBaja) {
+                <span class="mini-baja" title="De baja el {{ registroSeleccionado.empleado?.fechaBaja }}">
+                  BAJA {{ registroSeleccionado.empleado?.fechaBaja }}
+                </span>
+              }
+            </div>
+          </div>
+          <div class="col-md-3 col-6">
+            <span class="campo-modal-label">Departamento</span>
+            <div class="campo-modal-valor">{{ registroSeleccionado.empleado?.departamento }}</div>
+          </div>
+          <div class="col-md-3 col-6">
+            <span class="campo-modal-label">Turno</span>
+            <span class="badge-turno-tabla" [ngClass]="'turno-' + (registroSeleccionado.empleado?.turno || 'A').charAt(0)">
+              {{ registroSeleccionado.empleado?.turno }}
+            </span>
+          </div>
+          <div class="col-md-4 col-6">
+            <span class="campo-modal-label">Puesto</span>
+            <div class="campo-modal-valor">{{ registroSeleccionado.empleado?.puesto || '-' }}</div>
+          </div>
+          <div class="col-md-4 col-6">
+            <span class="campo-modal-label">Centro de costo</span>
+            <div class="campo-modal-valor">{{ registroSeleccionado.empleado?.centroDeCosto || '-' }}</div>
+          </div>
+          <div class="col-md-4 col-6">
+            <span class="campo-modal-label">Sucursal</span>
+            <div class="campo-modal-valor">{{ registroSeleccionado.empleado?.sucursal || '-' }}</div>
+          </div>
+          <div class="col-md-6 col-6">
+            <span class="campo-modal-label">Ruta usual</span>
+            <div class="campo-modal-valor">{{ registroSeleccionado.empleado?.rutaUsual || '-' }}</div>
+          </div>
+          <div class="col-md-6 col-6">
+            <span class="campo-modal-label">Parada usual</span>
+            <div class="campo-modal-valor">{{ registroSeleccionado.empleado?.paradaUsual || '-' }}</div>
+          </div>
+
+          <div class="col-12"><hr class="my-2" /></div>
+
+          <div class="col-12">
+            <h6 class="section-modal-title">Tiempo Extra</h6>
+          </div>
+          <div class="col-md-3 col-6">
+            <span class="campo-modal-label">Fecha</span>
+            <div class="campo-modal-valor">{{ registroSeleccionado.fecha }}</div>
+          </div>
+          <div class="col-md-3 col-6">
+            <span class="campo-modal-label">Horario</span>
+            <span class="badge-horario" [ngClass]="registroSeleccionado.horario === '7-7' ? 'c77' : 'c74'">
+              {{ registroSeleccionado.horario || '-' }}
+            </span>
+          </div>
+          <div class="col-md-3 col-6">
+            <span class="campo-modal-label">Turno extra</span>
+            <span class="badge-turno-tabla" [ngClass]="'turno-' + (registroSeleccionado.turnoExtra || 'A').charAt(0)">
+              {{ registroSeleccionado.turnoExtra }}
+            </span>
+          </div>
+          <div class="col-md-6 col-6">
+            <span class="campo-modal-label"
+              [ngClass]="{ 'text-danger fw-bold': registroSeleccionado.alertaRuta }">
+              Ruta extra
+            </span>
+            <div class="campo-modal-valor"
+              [ngClass]="{ 'campo-alerta': registroSeleccionado.alertaRuta }">
+              {{ registroSeleccionado.rutaExtra || '-' }}
+            </div>
+          </div>
+          <div class="col-md-6 col-6">
+            <span class="campo-modal-label"
+              [ngClass]="{ 'text-danger fw-bold': registroSeleccionado.alertaParada }">
+              Parada extra
+            </span>
+            <div class="campo-modal-valor"
+              [ngClass]="{ 'campo-alerta': registroSeleccionado.alertaParada }">
+              {{ registroSeleccionado.paradaExtra || '-' }}
+            </div>
+          </div>
+          <div class="col-12">
+            <span class="campo-modal-label">Observaciones</span>
+            <div class="campo-modal-valor">{{ registroSeleccionado.observaciones || '-' }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        @if (registroSeleccionado.id) {
+          <button class="btn btn-outline-primary btn-sm" (click)="abrirEditarRegistro(registroSeleccionado)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" class="me-1">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Editar registro
+          </button>
+        }
+        <button class="btn btn-secondary" (click)="cerrarModalDetalle()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal Editar Registro -->
+@if (mostrarModalEdicion && registroEdicion) {
+  <div class="modal-overlay" (click)="cerrarEdicion()">
+    <div class="modal-custom modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <h5>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="me-2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          Editar registro
+        </h5>
+        <button class="btn-close-custom" (click)="cerrarEdicion()">x</button>
+      </div>
+      <div class="modal-body-custom">
+        <div class="row g-3">
+          <div class="col-12">
+            <h6 class="section-modal-title">Tiempo Extra</h6>
+          </div>
+          <div class="col-md-6 col-12">
+            <span class="campo-modal-label">Fecha</span>
+            <input type="date" class="form-control form-control-sm" [(ngModel)]="registroEdicion.fecha" />
+          </div>
+          <div class="col-md-3 col-6">
+            <span class="campo-modal-label">Horario</span>
+            <select class="form-select form-select-sm" [(ngModel)]="registroEdicion.horario">
+              @for (h of horarios; track h.value) {
+                <option [value]="h.value">{{ h.label }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-3 col-6">
+            <span class="campo-modal-label">Turno extra</span>
+            <select class="form-select form-select-sm" [(ngModel)]="registroEdicion.turnoExtra">
+              <option value="">-</option>
+              @for (turno of turnos; track turno) {
+                <option [value]="turno">Turno {{ turno }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-12">
+            <app-selector-ruta-parada
+              [rutas]="rutas"
+              [ruta]="registroEdicion.rutaExtra || ''"
+              [parada]="registroEdicion.paradaExtra || ''"
+              (rutaChange)="registroEdicion.rutaExtra = $event"
+              (paradaChange)="registroEdicion.paradaExtra = $event"
+              etiquetaRuta="Ruta de tiempo extra"
+              etiquetaParada="Parada del camion (extra)"
+            />
+          </div>
+          <div class="col-12">
+            <span class="campo-modal-label">Observaciones</span>
+            <textarea rows="2" class="form-control form-control-sm" [(ngModel)]="registroEdicion.observaciones"
+              placeholder="Observaciones adicionales"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        <button class="btn btn-outline-secondary btn-sm" (click)="cerrarEdicion()" [disabled]="guardandoEdicion">Cancelar</button>
+        <button class="btn btn-primary btn-sm" (click)="guardarEdicion()" [disabled]="guardandoEdicion">
+          @if (guardandoEdicion) {
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+            Guardando...
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" class="me-1">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Guardar cambios
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal Agregar Administrativos -->
+@if (mostrarModalAgregarAdmin) {
+  <div class="modal-overlay" (click)="cerrarAgregarAdmin()">
+    <div class="modal-custom modal-xl" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <h5>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="me-2">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+          Agregar Administrativos / Management
+        </h5>
+        <button class="btn-close-custom" (click)="cerrarAgregarAdmin()">x</button>
+      </div>
+      <div class="modal-body-custom">
+        <div class="filtros-row mb-2">
+          <div class="buscador-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" class="buscador-icono">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" class="form-control buscador-input" [(ngModel)]="busquedaAgregar"
+              placeholder="Buscar por nombre, numero, departamento..." />
+            @if (busquedaAgregar) {
+              <button class="btn-clear-busqueda" (click)="busquedaAgregar = ''" title="Limpiar busqueda">x</button>
+            }
+          </div>
+          <div class="filtro-select">
+            <label class="filtro-label">Estado</label>
+            <select class="form-select form-select-sm" [(ngModel)]="filtroEstadoAgregar">
+              <option value="">Todos</option>
+              <option value="activos">Activos</option>
+              <option value="baja">De baja</option>
+              <option value="bloqueado">No tiempo extra</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive tabla-scroll tabla-scroll--modal">
+          <table class="table table-hover align-middle tabla-historial">
+            <thead>
+              <tr>
+                <th style="width: 42px"></th>
+                <th>No. Empleado</th>
+                <th>Nombre</th>
+                <th>Puesto</th>
+                <th>Departamento</th>
+                <th>Turno</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (emp of empleadosParaAgregar; track emp.id) {
+                <tr class="fila-seleccionable" [ngClass]="{ 'fila-seleccionada': seleccionAdmin.has(emp.id!) }"
+                  (click)="toggleSeleccionAdmin(emp.id!)">
+                  <td>
+                    <input type="checkbox" class="form-check-input" [checked]="seleccionAdmin.has(emp.id!)"
+                      (click)="$event.stopPropagation()" (change)="toggleSeleccionAdmin(emp.id!)" />
+                  </td>
+                  <td><span class="badge-numero-tabla">{{ emp.numeroEmpleado }}</span></td>
+                  <td class="td-nombre">{{ emp.nombre || '-' }}
+                    @if (emp.bloqueadoTiempoExtra) {
+                      <span class="mini-alerta ruta" title="No puede realizar tiempo extra">No T.E.</span>
+                    }
+                  </td>
+                  <td>{{ emp.puesto || '-' }}</td>
+                  <td>{{ emp.departamento || '-' }}</td>
+                  <td>
+                    <span class="badge-turno-tabla" [ngClass]="'turno-' + (emp.turno || 'A').charAt(0)">
+                      {{ emp.turno || '-' }}
+                    </span>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="text-center text-muted py-4">No hay empleados disponibles para agregar.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        <span class="text-muted small">
+          Seleccionados: <strong>{{ seleccionAdmin.size }}</strong>
+        </span>
+        <button class="btn btn-secondary" (click)="cerrarAgregarAdmin()" [disabled]="guardandoAdmin">Cancelar</button>
+        <button class="btn btn-primary" (click)="agregarAdministrativos()"
+          [disabled]="guardandoAdmin || seleccionAdmin.size === 0">
+          @if (guardandoAdmin) {
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+            Agregando...
+          } @else {
+            Agregar {{ seleccionAdmin.size }}
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal Editar Administrativo -->
+@if (mostrarModalEditarAdmin && adminEdicion) {
+  <div class="modal-overlay" (click)="cerrarEditarAdmin()">
+    <div class="modal-custom modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <h5>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" class="me-2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          Editar administrativo
+        </h5>
+        <button class="btn-close-custom" (click)="cerrarEditarAdmin()">x</button>
+      </div>
+      <div class="modal-body-custom">
+        <div class="row g-3">
+          <div class="col-md-8 col-12">
+            <label class="campo-modal-label">Nombre completo</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="adminEdicion.nombre" />
+          </div>
+          <div class="col-md-4 col-12">
+            <label class="campo-modal-label">Numero de empleado</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="adminEdicion.numeroEmpleado" />
+          </div>
+          <div class="col-md-6 col-12">
+            <label class="campo-modal-label">Departamento</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="adminEdicion.departamento" />
+          </div>
+          <div class="col-md-3 col-6">
+            <label class="campo-modal-label">Turno</label>
+            <select class="form-select form-select-sm" [(ngModel)]="adminEdicion.turno">
+              <option value="">-</option>
+              @for (turno of turnos; track turno) {
+                <option [value]="turno">{{ turno }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-3 col-6">
+            <label class="campo-modal-label">Sucursal</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="adminEdicion.sucursal" />
+          </div>
+          <div class="col-md-6 col-12">
+            <label class="campo-modal-label">Puesto</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="adminEdicion.puesto" />
+          </div>
+          <div class="col-md-6 col-12">
+            <label class="campo-modal-label">Centro de costo</label>
+            <input type="text" class="form-control form-control-sm" [(ngModel)]="adminEdicion.centroDeCosto" />
+          </div>
+          <div class="col-12">
+            <app-selector-ruta-parada
+              [rutas]="rutas"
+              [ruta]="adminEdicion.rutaUsual || ''"
+              [parada]="adminEdicion.paradaUsual || ''"
+              (rutaChange)="adminEdicion.rutaUsual = $event"
+              (paradaChange)="adminEdicion.paradaUsual = $event"
+              tamanio="sm"
+              etiquetaRuta="Ruta usual"
+              etiquetaParada="Parada del camion (usual)"
+            />
+          </div>
+          <div class="col-md-6 col-12">
+            <label class="campo-modal-label">Fecha de baja</label>
+            <div class="input-group input-group-sm">
+              <input type="date" class="form-control" [(ngModel)]="adminEdicion.fechaBaja" />
+              <button class="btn btn-outline-danger" type="button" (click)="adminEdicion.fechaBaja = null"
+                title="Quitar fecha de baja">Quitar</button>
+            </div>
+            <div class="form-text text-muted small">Deja vacio para marcar como activo.</div>
+          </div>
+          <div class="col-md-6 col-12">
+            <label class="campo-modal-label">Restricciones</label>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="admin-bloqueo"
+                [(ngModel)]="adminEdicion.bloqueadoTiempoExtra" />
+              <label class="form-check-label" for="admin-bloqueo">No puede realizar tiempo extra</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        <button class="btn btn-outline-secondary btn-sm" (click)="cerrarEditarAdmin()" [disabled]="guardandoAdmin">Cancelar</button>
+        <button class="btn btn-primary btn-sm" (click)="guardarEdicionAdmin()" [disabled]="guardandoAdmin">
+          @if (guardandoAdmin) {
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+            Guardando...
+          } @else {
+            Guardar cambios
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal Quitar Administrativo -->
+@if (mostrarModalQuitarAdmin && adminAEliminar) {
+  <div class="modal-overlay" (click)="cerrarQuitarAdmin()">
+    <div class="modal-custom" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom danger">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        <h5>Quitar administrativo</h5>
+      </div>
+      <div class="modal-body-custom">
+        <p>
+          Quitar a <strong>{{ adminAEliminar.nombre }}</strong>
+          del grupo Administrativo / Management?
+        </p>
+        <p class="text-muted small mb-0">Si decides despues, puedes volver a agregarlo.</p>
+      </div>
+      <div class="modal-footer-custom">
+        <button class="btn btn-secondary" (click)="cerrarQuitarAdmin()" [disabled]="guardandoAdmin">Cancelar</button>
+        <button class="btn btn-danger" (click)="quitarAdministrativo()" [disabled]="guardandoAdmin">
+          @if (guardandoAdmin) {
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+            Quitando...
+          } @else {
+            Quitar
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
